@@ -28,7 +28,7 @@ func NewAdapter() ports.ICorePort {
 
 func (a *Adapter) WithLogger(logger hclog.Logger) ports.ICorePort {
 	a.logger = logger.Named("core")
-	
+
 	return a
 }
 

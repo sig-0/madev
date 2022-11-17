@@ -2,18 +2,27 @@ package app
 
 import (
 	"fmt"
-	"io"
-
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/pkg/stdcopy"
+	"io"
 )
+
+func ContainsNetwork(haystack []types.NetworkResource, needle string) bool {
+	for _, item := range haystack {
+		if item.Name == needle {
+			return true
+		}
+	}
+	return false
+}
 
 func (a *Adapter) runContainer(
 	config *container.Config,
 	host *container.HostConfig,
 	containerName string,
-	runInBackground bool) (container.ContainerCreateCreatedBody, error) {
+	initContainer bool,
+) (container.ContainerCreateCreatedBody, error) {
 	var err error
 
 	// Pull the image
@@ -21,11 +30,8 @@ func (a *Adapter) runContainer(
 	if err != nil {
 		return container.ContainerCreateCreatedBody{}, fmt.Errorf("could not pull image from image repo err=%w", err)
 	}
-
-	// Show pull logs if debug enabled
-	if a.logger.IsDebug() {
-		io.Copy(a.docker.outputWriter, a.docker.dockerReader)
-	}
+	// Output from Image Pull must be on, as the pull won't start
+	io.Copy(a.docker.outputWriter, a.docker.dockerReader)
 
 	// Create containers
 	resp, err := a.core.Docker().ContainerCreate(a.ctx, config, host, nil, nil, containerName)
@@ -39,7 +45,7 @@ func (a *Adapter) runContainer(
 	}
 
 	// Wait for containers to start
-	if !runInBackground {
+	if initContainer {
 		statusCh, errCh := a.core.Docker().ContainerWait(a.ctx, resp.ID, container.WaitConditionNotRunning)
 		select {
 		case err := <-errCh:
