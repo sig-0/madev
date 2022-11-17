@@ -2,28 +2,29 @@ package main
 
 import (
 	"github.com/hashicorp/go-hclog"
+	"github.com/madz-lab/madev/framework/adapters/left/cmd"
 	"github.com/madz-lab/madev/internal/adapters/app"
 	"github.com/madz-lab/madev/internal/adapters/core"
+	"os"
 )
 
 func main() {
+	// create logger
 	logger := hclog.New(&hclog.LoggerOptions{Name: "madev", Level: hclog.Info})
 
+	// create core port
 	appCore := core.NewAdapter().WithLogger(logger)
 	defer appCore.Close()
 
-	madev := app.NewAdapter(appCore).WithLogger(logger)
-	defer madev.Close()
+	// create cmd port
+	cmdPort := cmd.NewAdapter().WithLogger(logger)
 
-	blChainErr := madev.DeployBlockchainWithProxy()
-	if blChainErr != nil {
-		logger.Error("Could not deploy blockchain", "err", blChainErr.Error())
-		return
+	// create main app and pass other ports to it
+	madev := app.NewAdapter(appCore, cmdPort).WithLogger(logger)
+	if err := madev.Run(); err != nil {
+		logger.Error("Could not run app", "err", err.Error())
+		os.Exit(1)
 	}
 
-	blScoutErr := madev.DeployBlockscout()
-	if blScoutErr != nil {
-		logger.Error("Could not deploy blockscout", "err", blScoutErr.Error())
-		return
-	}
+	// TODO: add SIGTERM handler
 }
