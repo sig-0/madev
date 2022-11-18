@@ -180,9 +180,11 @@ func (a *Adapter) Run() error {
 		// strip folder name from embeded folder
 		front, _ := fs.Sub(embed.EmbededFront, "build")
 
+		//TODO: Handle react routing
 		mux.Handle("/", http.FileServer(http.FS(front)))
 		mux.HandleFunc("/api/v1/deploy", a.deployHandler)
 		mux.HandleFunc("/api/v1/destroy", a.destroyHandler)
+		mux.HandleFunc("/api/v1/logs", a.logsHandler)
 
 		a.logger.Info("serving web gui at localhost:15000")
 		err := http.ListenAndServe(":15000", mux)
