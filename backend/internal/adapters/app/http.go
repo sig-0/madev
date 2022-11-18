@@ -14,6 +14,7 @@ type RawJsonParameters struct {
 }
 
 func (a *Adapter) deployHandler(writer http.ResponseWriter, request *http.Request) {
+	request.Header.Set("Access-Control-Allow-Origin", "*")
 	// get premine accounts from web request
 	err := json.NewDecoder(request.Body).Decode(a.RawJsonParameters)
 	if err != nil {
@@ -59,6 +60,8 @@ func (a *Adapter) destroyHandler(writer http.ResponseWriter, request *http.Reque
 	a.logger.Info("cleaning the environment")
 	// read data from storage
 	a.storage.ReadJson(&a.docker.Environment)
+
+	request.Header.Set("Access-Control-Allow-Origin", "*")
 
 	// remove validators
 	a.logger.Info("purging validators")
@@ -132,6 +135,8 @@ func (a *Adapter) indexHandler(writer http.ResponseWriter, request *http.Request
 	writer.WriteHeader(http.StatusOK)
 	writer.Header().Set("Content-Type", "application/json")
 
+	request.Header.Set("Access-Control-Allow-Origin", "*")
+
 	resp := make(map[string]string)
 	resp["message"] = "Work In Progress !"
 	respEnc, err := json.Marshal(resp)
@@ -144,6 +149,8 @@ func (a *Adapter) indexHandler(writer http.ResponseWriter, request *http.Request
 
 func (a *Adapter) logsHandler(writer http.ResponseWriter, request *http.Request) {
 	var container types.Container
+
+	request.Header.Set("Access-Control-Allow-Origin", "*")
 
 	nodeId := struct {
 		Name string `json:"node_name"`
