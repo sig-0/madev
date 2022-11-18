@@ -22,19 +22,26 @@ const Logs: FC<ILogsProps> = () => {
         });
     }
 
+    
     fetchData().then((data) => {
-      console.log(data)
-
       setLogs(data.logs)
     }).catch((e) => {
     })
+    
     const intFunc = setInterval(() => {
+      
       fetchData().then((data) => {
         console.log(data)
-
+        console.log("fetched")
+        var objDiv = document.getElementById("bottom");
+        if (objDiv != null) {
+          objDiv.scrollTop = objDiv.scrollHeight;
+        }
+        
         setLogs(data.logs)
       }).catch((e) => {
       })
+      
     }, 2000);
   
     return () => clearInterval(intFunc);
@@ -48,20 +55,26 @@ const Logs: FC<ILogsProps> = () => {
           display={'flex'}
           flexDirection={"column-reverse"}
         >
-          <div style={{"color":"silver", "backgroundColor":"black", "height":"800px", "width":"100%", "padding":"50px", "borderRadius":"25px", "overflow": "auto", "fontSize":"13px", "overflowY": "scroll", "display":"flex", "flexDirection":"column-reverse"}}>
+          <div>
+          <div style={{"color":"silver", "backgroundColor":"black", "height":"800px", "width":"100%", "padding":"50px", "borderRadius":"25px", "overflow": "auto", "fontSize":"13px", "overflowY": "scroll", "display":"flex","flexDirection":"column-reverse"}}>
           {
-             logs.map((item, index) => {
+             logs.slice(0).reverse().map((item, index) => {
               return <div>{item}</div>
              })
-
+            
           }
+          
           </div>
-
+          <div id="bottom"></div>
+          </div>
           <Box display={'flex'} alignItems={'center'} width={'100%'} marginBottom={"30px"}>
           <Box display={'flex'} justifyContent={"space-between"}>
             <ActionButton text={'Log to file'} square={true}/>
             <Box ml={2}>
             <ActionButton text={'Log level'} square={true}/>
+            </Box>
+            <Box ml={2}>
+            <ActionButton text={'Select node'} square={true}/>
             </Box>
           </Box>
           </Box>

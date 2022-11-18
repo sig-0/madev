@@ -1,19 +1,19 @@
 import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
-import QuitService from '../../../services/quitService/quitService';
 import theme from '../../../theme/theme';
 import ActionButton from '../../atoms/ActionButton/ActionButton';
 import Logo from '../../atoms/Logo/Logo';
 import { EActiveAppTab } from '../../layouts/AppLayout/appLayout.types';
 import NavigationBarItem from '../../molecules/NavigationBarItem/NavigationBarItem';
-import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { INavigationBarProps } from './navigationBar.types';
+import { useNavigate } from 'react-router-dom';
 
 const NavigationBar: FC<INavigationBarProps> = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<EActiveAppTab>(
     EActiveAppTab.ACCOUNTS
@@ -57,23 +57,12 @@ const NavigationBar: FC<INavigationBarProps> = () => {
     }
   ];
 
-  const { openSnackbar } = useSnackbar();
   const handleTabChange = (newActive: EActiveAppTab) => {
     setActiveTab(newActive);
   };
 
   const handleQuit = () => {
-    const sendQuitSignal = async () => {
-      await QuitService.sendQuitSignal();
-    };
-
-    sendQuitSignal()
-      .then(() => {
-        openSnackbar('Environment closed', 'success');
-      })
-      .catch((e) => {
-        openSnackbar('Unable to gracefully quit', 'error');
-      });
+    navigate('/quit');
   };
 
   return (

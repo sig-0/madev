@@ -7,6 +7,7 @@ import ContractView from '../components/pages/ContractView/ContractView';
 import Logs from '../components/pages/Logger/Logs';
 import NewContract from '../components/pages/NewContract/NewContract';
 import SetupPage from '../components/pages/SetupPage/SetupPage';
+import Quit from '../components/pages/QuitPage/Quit';
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -22,6 +23,7 @@ const AppRouter = () => (
           element={<ContractView />}
         />
         <Route path={'/blockscout'} element={<Blockscout />} />
+        <Route path={'/quit'} element={<Quit />} />
       </Route>
       <Route path="*" element={<Navigate to={'/setup'} />} />
     </Routes>
