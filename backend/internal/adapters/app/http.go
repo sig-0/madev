@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"github.com/docker/docker/api/types"
 	"net/http"
+	"os"
+	"regexp"
+	"strings"
 )
 
 type RawJsonParameters struct {
@@ -137,4 +140,84 @@ func (a *Adapter) indexHandler(writer http.ResponseWriter, request *http.Request
 	}
 
 	writer.Write(respEnc)
+}
+
+func (a *Adapter) logsHandler(writer http.ResponseWriter, request *http.Request) {
+	var container types.Container
+
+	nodeId := struct {
+		Name string `json:"node_name"`
+	}{}
+
+	err := json.NewDecoder(request.Body).Decode(&nodeId)
+	if err != nil {
+		errorJsonResponse(writer, err)
+		return
+	}
+
+	nodeList, err := a.core.Docker().ContainerList(a.ctx, types.ContainerListOptions{})
+	if err != nil {
+		a.logger.Error("could retrieve container list", "err", err.Error())
+	}
+
+	for _, node := range nodeList {
+		for _, name := range node.Names {
+			if name == "/"+nodeId.Name {
+				container = node
+			}
+		}
+	}
+	logFile, err := os.Create(nodeId.Name)
+	if err != nil {
+		a.logger.Error("could not write log file", "err", err.Error())
+	}
+	defer logFile.Close()
+
+	// write logs to file
+	a.docker.outputWriter = logFile
+	a.docker.outputErrorWriter = logFile
+
+	err = a.getLogs(container.ID)
+	if err != nil {
+		a.logger.Error("could not get container id", "id", container.ID, "err", err.Error())
+	}
+
+	readLogFile, err := os.ReadFile(nodeId.Name)
+	if err != nil {
+		a.logger.Error("could not read log file", "err", err.Error())
+		errorJsonResponse(writer, err)
+		return
+	}
+	var resp []string
+
+	rawStrArr := strings.Split(strings.ReplaceAll(string(readLogFile), "\r\n", "\n"), "\n")
+	for _, str := range rawStrArr {
+		match, _ := regexp.MatchString("websocket", str)
+		if !match {
+			resp = append(resp, str)
+		}
+	}
+	arrayResp := struct {
+		Logs    []string `json:"logs"`
+		Success bool     `json:"success"`
+	}{}
+
+	arrayResp.Logs = resp
+	arrayResp.Success = true
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(arrayResp)
+
+	a.logger.Info("logs successfully sent")
+}
+
+func errorJsonResponse(w http.ResponseWriter, err error) {
+	errorResp := struct {
+		Message string `json:"message"`
+		Error   string `json:"error"`
+	}{}
+	errorResp.Message = "error occured, could not process request"
+	errorResp.Error = err.Error()
+
+	w.WriteHeader(http.StatusBadRequest)
+	json.NewEncoder(w).Encode(errorResp)
 }
