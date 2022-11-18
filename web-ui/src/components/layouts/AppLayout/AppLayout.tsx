@@ -67,8 +67,6 @@ const AppLayout: FC<IAppLayoutProps> = () => {
     <Box display={'flex'} width={'100%'} flexGrow={1}>
       {isMobile ? renderSwipeableDrawer() : renderPermanentDrawer()}
       <Box
-        py={{xs: 0, md: 4}}
-        px={{xs: 0, md: 8}}
         width={'100%'}
         overflow={'auto'}
         className={classes.mainSection}

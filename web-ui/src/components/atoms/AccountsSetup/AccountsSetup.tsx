@@ -125,7 +125,7 @@ const AccountsSetup: FC<ISetupItemProps> = (props) => {
 
         {loading && (
           <Box mt={4}>
-            <LoadingIndicator />
+            <Typography style={{"textAlign":"center", "fontWeight":"bold"}}> Generating... </Typography>
           </Box>
         )}
 
