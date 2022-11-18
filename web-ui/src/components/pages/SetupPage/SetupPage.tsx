@@ -1,14 +1,28 @@
-import { Box, Container, Step, StepLabel, Stepper } from '@material-ui/core';
-import { FC, useEffect, useState } from 'react';
+import {
+  Box,
+  Container,
+  Step,
+  StepLabel,
+  Stepper,
+  Typography
+} from '@material-ui/core';
+import { FC, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SetupContext from '../../../context/SetupContext';
+import DeploymentService from '../../../services/deploymentService/deploymentService';
 import AccountsSetup from '../../atoms/AccountsSetup/AccountsSetup';
 import AdditionalServices from '../../atoms/AdditionalServices/AdditionalServices';
 import ClusterParams from '../../atoms/ClusterParams/ClusterParams';
+import LoadingIndicator from '../../atoms/LoadingIndicator/LoadingIndicator';
 import NetworkParams from '../../atoms/NetworkParams/NetworkParams';
 import ProviderSelect from '../../atoms/ProviderSelect/ProviderSelect';
+import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { ESetupStep, ISetupPageProps } from './setup.Types';
 
 const SetupPage: FC<ISetupPageProps> = () => {
   const [activeStep, setActiveStep] = useState<ESetupStep>(ESetupStep.PROVIDER);
+
+  const { accountParams } = useContext(SetupContext);
 
   const steps = [
     ESetupStep.PROVIDER,
@@ -28,8 +42,24 @@ const SetupPage: FC<ISetupPageProps> = () => {
         return <ClusterParams next={handleNext} />;
       case ESetupStep.ACCOUNTS_SETUP:
         return <AccountsSetup next={handleNext} />;
-      default:
+      case ESetupStep.ADDITIONAL_SERVICES:
         return <AdditionalServices next={handleNext} />;
+      case ESetupStep.DONE:
+        return (
+          <Box mt={4}>
+            <LoadingIndicator />
+            <Box
+              mt={2}
+              display={'flex'}
+              alignItems={'center'}
+              justifyContent={'center'}
+            >
+              <Typography>Setting up environment...</Typography>
+            </Box>
+          </Box>
+        );
+      default:
+        return null;
     }
   };
 
@@ -53,10 +83,27 @@ const SetupPage: FC<ISetupPageProps> = () => {
     }
   };
 
+  const { openSnackbar } = useSnackbar();
+
+  const navigate = useNavigate();
+
   useEffect(() => {
+    const startDeployment = async () => {
+      await DeploymentService.startDeployment({
+        premine_accounts: accountParams ? accountParams.accounts : []
+      });
+    };
+
     if (activeStep === ESetupStep.DONE) {
-      // TODO
-      console.log('Finished!');
+      startDeployment()
+        .then(() => {
+          navigate('/placeholder');
+
+          openSnackbar('Deployment successful', 'success');
+        })
+        .catch(() => {
+          openSnackbar('Unable to perform deployment', 'error');
+        });
     }
   }, [activeStep]);
 

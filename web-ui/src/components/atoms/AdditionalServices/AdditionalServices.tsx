@@ -3,23 +3,19 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  FormGroup,
-  Typography
+  FormGroup
 } from '@material-ui/core';
-import { FC, Fragment, useContext, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import SetupContext from '../../../context/SetupContext';
 import { EAdditionalService } from '../../../context/setupContext.types';
 import { ESetupStep, ISetupItemProps } from '../../pages/SetupPage/setup.Types';
 import ActionButton from '../ActionButton/ActionButton';
-import LoadingIndicator from '../LoadingIndicator/LoadingIndicator';
 import PageTitle from '../PageTitle/PageTitle';
 
 const AdditionalServices: FC<ISetupItemProps> = (props) => {
   const { next } = props;
 
-  const { setNetworkParams } = useContext(SetupContext);
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const { setAdditionalServices } = useContext(SetupContext);
 
   const [services, setServices] = useState<Map<EAdditionalService, boolean>>(
     new Map<EAdditionalService, boolean>()
@@ -37,68 +33,57 @@ const AdditionalServices: FC<ISetupItemProps> = (props) => {
   ];
 
   const startDeploying = () => {
-    next();
+    const additionalServices: EAdditionalService[] = [];
 
-    setLoading(true);
+    for (let entry of Array.from(services.entries())) {
+      additionalServices.push(entry[0]);
+    }
+
+    setAdditionalServices({ services: additionalServices });
+
+    next();
   };
 
   return (
-    <Fragment>
-      {!loading && (
-        <Box
-          display={'flex'}
-          flexDirection={'column'}
-          alignItems={'center'}
-          justifyContent={'center'}
-          mt={4}
-          width={'100%'}
-        >
-          <PageTitle title={ESetupStep.ADDITIONAL_SERVICES} />
-          <Box mt={4}>
-            <FormControl component="fieldset">
-              <FormGroup>
-                {allServices.map((service, index) => {
-                  return (
-                    <FormControlLabel
-                      key={index}
-                      control={
-                        <Checkbox
-                          color={'primary'}
-                          checked={services.get(service)}
-                          onChange={() => toggleService(service)}
-                          name={service}
-                        />
-                      }
-                      label={service}
+    <Box
+      display={'flex'}
+      flexDirection={'column'}
+      alignItems={'center'}
+      justifyContent={'center'}
+      mt={4}
+      width={'100%'}
+    >
+      <PageTitle title={ESetupStep.ADDITIONAL_SERVICES} />
+      <Box mt={4}>
+        <FormControl component="fieldset">
+          <FormGroup>
+            {allServices.map((service, index) => {
+              return (
+                <FormControlLabel
+                  key={index}
+                  control={
+                    <Checkbox
+                      color={'primary'}
+                      checked={services.get(service)}
+                      onChange={() => toggleService(service)}
+                      name={service}
                     />
-                  );
-                })}
-              </FormGroup>
-            </FormControl>
-          </Box>
-          <Box width={'100%'} display={'flex'} mt={4} justifyContent={'center'}>
-            <ActionButton
-              text={'Start Environment'}
-              square={true}
-              onClick={() => startDeploying()}
-            />
-          </Box>
-        </Box>
-      )}
-      {loading && (
-        <Box mt={4}>
-          <LoadingIndicator />
-          <Box
-            mt={2}
-            display={'flex'}
-            alignItems={'center'}
-            justifyContent={'center'}
-          >
-            <Typography>Setting up environment...</Typography>
-          </Box>
-        </Box>
-      )}
-    </Fragment>
+                  }
+                  label={service}
+                />
+              );
+            })}
+          </FormGroup>
+        </FormControl>
+      </Box>
+      <Box width={'100%'} display={'flex'} mt={4} justifyContent={'center'}>
+        <ActionButton
+          text={'Start Environment'}
+          square={true}
+          onClick={() => startDeploying()}
+        />
+      </Box>
+    </Box>
   );
 };
 
