@@ -1,3 +1,5 @@
+import { Contract } from 'ethers';
+
 export enum EBackendProvider {
   POLYGON_EDGE = 'Polygon Edge',
   GETH = 'Geth',
@@ -30,4 +32,8 @@ export enum EAdditionalService {
 
 export interface IAdditionalServices {
   services: EAdditionalService[];
+}
+
+export interface IContractStorage {
+  contracts: Contract[];
 }

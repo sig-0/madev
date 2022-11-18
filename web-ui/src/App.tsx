@@ -11,6 +11,7 @@ import {
   IAccountsSetupParams,
   IAdditionalServices,
   IClusterParams,
+  IContractStorage,
   INetworkParams
 } from './context/setupContext.types';
 import AppRouter from './router/AppRouter';
@@ -32,18 +33,24 @@ function App() {
   const [additionalServices, setAdditionalServices] =
     useState<IAdditionalServices | null>(null);
 
+  const [contracts, setContracts] = useState<IContractStorage | null>({
+    contracts: []
+  });
+
   const setupContext: ISetupContext = {
     provider,
     networkParams,
     clusterParams,
     accountParams,
     additionalServices,
+    contracts,
 
     setProvider,
     setClusterParams,
     setNetworkParams,
     setAccountParams,
-    setAdditionalServices
+    setAdditionalServices,
+    setContracts
   };
 
   return (
