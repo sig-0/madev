@@ -20,3 +20,14 @@ export interface IAccountsSetupParams {
   mnemonic: string;
   accounts: string[];
 }
+
+export enum EAdditionalService {
+  BLOCKSCOUT = 'Blockscout',
+  ETHERSCAN = 'Etherscan',
+  THE_GRAPH = 'The Graph',
+  NEW_RELIC = 'New Relic'
+}
+
+export interface IAdditionalServices {
+  services: EAdditionalService[];
+}

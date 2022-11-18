@@ -1,6 +1,7 @@
 import { Box, Container, Step, StepLabel, Stepper } from '@material-ui/core';
 import { FC, useEffect, useState } from 'react';
 import AccountsSetup from '../../atoms/AccountsSetup/AccountsSetup';
+import AdditionalServices from '../../atoms/AdditionalServices/AdditionalServices';
 import ClusterParams from '../../atoms/ClusterParams/ClusterParams';
 import NetworkParams from '../../atoms/NetworkParams/NetworkParams';
 import ProviderSelect from '../../atoms/ProviderSelect/ProviderSelect';
@@ -28,7 +29,7 @@ const SetupPage: FC<ISetupPageProps> = () => {
       case ESetupStep.ACCOUNTS_SETUP:
         return <AccountsSetup next={handleNext} />;
       default:
-        return null;
+        return <AdditionalServices next={handleNext} />;
     }
   };
 
@@ -61,7 +62,7 @@ const SetupPage: FC<ISetupPageProps> = () => {
 
   return (
     <Container maxWidth={'lg'} fixed={true}>
-      <Box width={'100%'} height={'100%'}>
+      <Box width={'100%'} height={'100%'} mt={4}>
         <Stepper activeStep={steps.indexOf(activeStep)}>
           {steps.map((label, index) => {
             const stepProps: { completed?: boolean } = {};

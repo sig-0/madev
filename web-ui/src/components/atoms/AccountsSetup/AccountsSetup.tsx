@@ -1,5 +1,5 @@
 import { Box, TextField, Typography } from '@material-ui/core';
-import { Wallet } from 'ethers';
+import { utils, Wallet } from 'ethers';
 import { useFormik } from 'formik';
 import { FC, useEffect, useState } from 'react';
 import { IAccountsSetupParams } from '../../../context/setupContext.types';
@@ -89,6 +89,21 @@ const AccountsSetup: FC<ISetupItemProps> = (props) => {
                 width: '500px'
               }}
             />
+            <Box ml={2}>
+              <ActionButton
+                text={'Generate'}
+                square={true}
+                onClick={() => {
+                  formik.setFieldValue(
+                    'mnemonic',
+                    Wallet.fromMnemonic(
+                      utils.entropyToMnemonic(utils.randomBytes(32))
+                    ).mnemonic.phrase
+                  );
+                }}
+                shouldSubmit={false}
+              />
+            </Box>
           </Box>
           <Box mt={4}>
             <Counter
