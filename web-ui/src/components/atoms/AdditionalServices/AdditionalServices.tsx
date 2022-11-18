@@ -6,8 +6,11 @@ import {
   FormGroup
 } from '@material-ui/core';
 import { FC, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SetupContext from '../../../context/SetupContext';
 import { EAdditionalService } from '../../../context/setupContext.types';
+import DeploymentService from '../../../services/deploymentService/deploymentService';
+import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { ESetupStep, ISetupItemProps } from '../../pages/SetupPage/setup.Types';
 import ActionButton from '../ActionButton/ActionButton';
 import PageTitle from '../PageTitle/PageTitle';
@@ -15,7 +18,7 @@ import PageTitle from '../PageTitle/PageTitle';
 const AdditionalServices: FC<ISetupItemProps> = (props) => {
   const { next } = props;
 
-  const { setAdditionalServices } = useContext(SetupContext);
+  const { setAdditionalServices, accountParams } = useContext(SetupContext);
 
   const [services, setServices] = useState<Map<EAdditionalService, boolean>>(
     new Map<EAdditionalService, boolean>()
@@ -32,7 +35,12 @@ const AdditionalServices: FC<ISetupItemProps> = (props) => {
     EAdditionalService.THE_GRAPH
   ];
 
+  const navigate = useNavigate();
+  const { openSnackbar } = useSnackbar();
+
   const startDeploying = () => {
+    next();
+
     const additionalServices: EAdditionalService[] = [];
 
     for (let entry of Array.from(services.entries())) {
@@ -41,7 +49,22 @@ const AdditionalServices: FC<ISetupItemProps> = (props) => {
 
     setAdditionalServices({ services: additionalServices });
 
-    next();
+    const startDeployment = async () => {
+      await DeploymentService.startDeployment({
+        // @ts-ignore
+        premine_accounts: accountParams.accounts
+      });
+    };
+
+    startDeployment()
+      .then(() => {
+        navigate('/placeholder');
+
+        openSnackbar('Deployment successful', 'success');
+      })
+      .catch(() => {
+        openSnackbar('Unable to perform deployment', 'error');
+      });
   };
 
   return (

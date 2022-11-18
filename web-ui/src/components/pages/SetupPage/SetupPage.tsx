@@ -6,17 +6,14 @@ import {
   Stepper,
   Typography
 } from '@material-ui/core';
-import { FC, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { FC, useContext, useState } from 'react';
 import SetupContext from '../../../context/SetupContext';
-import DeploymentService from '../../../services/deploymentService/deploymentService';
 import AccountsSetup from '../../atoms/AccountsSetup/AccountsSetup';
 import AdditionalServices from '../../atoms/AdditionalServices/AdditionalServices';
 import ClusterParams from '../../atoms/ClusterParams/ClusterParams';
 import LoadingIndicator from '../../atoms/LoadingIndicator/LoadingIndicator';
 import NetworkParams from '../../atoms/NetworkParams/NetworkParams';
 import ProviderSelect from '../../atoms/ProviderSelect/ProviderSelect';
-import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { ESetupStep, ISetupPageProps } from './setup.Types';
 
 const SetupPage: FC<ISetupPageProps> = () => {
@@ -82,30 +79,6 @@ const SetupPage: FC<ISetupPageProps> = () => {
         break;
     }
   };
-
-  const { openSnackbar } = useSnackbar();
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const startDeployment = async () => {
-      await DeploymentService.startDeployment({
-        premine_accounts: accountParams ? accountParams.accounts : []
-      });
-    };
-
-    if (activeStep === ESetupStep.DONE) {
-      startDeployment()
-        .then(() => {
-          navigate('/placeholder');
-
-          openSnackbar('Deployment successful', 'success');
-        })
-        .catch(() => {
-          openSnackbar('Unable to perform deployment', 'error');
-        });
-    }
-  }, [activeStep]);
 
   return (
     <Container maxWidth={'lg'} fixed={true}>

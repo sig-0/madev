@@ -1,7 +1,8 @@
 import { Box, TextField, Typography } from '@material-ui/core';
 import { utils, Wallet } from 'ethers';
 import { useFormik } from 'formik';
-import { FC, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
+import SetupContext from '../../../context/SetupContext';
 import { IAccountsSetupParams } from '../../../context/setupContext.types';
 import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { ESetupStep, ISetupItemProps } from '../../pages/SetupPage/setup.Types';
@@ -12,6 +13,8 @@ import PageTitle from '../PageTitle/PageTitle';
 
 const AccountsSetup: FC<ISetupItemProps> = (props) => {
   const { next } = props;
+
+  const { setAccountParams } = useContext(SetupContext);
 
   const [numAccounts, setNumAccounts] = useState<number>(10);
 
@@ -52,6 +55,11 @@ const AccountsSetup: FC<ISetupItemProps> = (props) => {
           }
 
           setAccounts({ addresses: addresses });
+
+          setAccountParams({
+            mnemonic: formik.values.mnemonic,
+            accounts: addresses
+          });
         } catch (e) {
           openSnackbar('Invalid mnemonic provided', 'error');
         }
