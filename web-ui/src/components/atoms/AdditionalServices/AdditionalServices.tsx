@@ -58,7 +58,7 @@ const AdditionalServices: FC<ISetupItemProps> = (props) => {
 
     startDeployment()
       .then(() => {
-        navigate('/placeholder');
+        navigate('/accounts');
 
         openSnackbar('Deployment successful', 'success');
       })
