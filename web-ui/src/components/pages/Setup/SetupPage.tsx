@@ -1,5 +1,6 @@
 import { Box, Container, Step, StepLabel, Stepper } from '@material-ui/core';
 import { FC, useEffect, useState } from 'react';
+import NetworkParams from '../../atoms/NetworkParams/NetworkParams';
 import ProviderSelect from '../../atoms/ProviderSelect/ProviderSelect';
 import { ESetupStep, ISetupPageProps } from './setup.Types';
 
@@ -17,6 +18,8 @@ const SetupPage: FC<ISetupPageProps> = () => {
     switch (activeStep) {
       case ESetupStep.PROVIDER:
         return <ProviderSelect next={handleNext} />;
+      case ESetupStep.NETWORK_PARAMS:
+        return <NetworkParams next={handleNext} />;
       default:
         return null;
     }

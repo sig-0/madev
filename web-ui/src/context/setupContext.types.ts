@@ -3,3 +3,10 @@ export enum EBackendProvider {
   GETH = 'Geth',
   AVALANCHE = 'Avalanche'
 }
+
+export interface INetworkParams {
+  gasLimit: number;
+  gasPrice: number;
+  chainID: number;
+  blockTime: number;
+}

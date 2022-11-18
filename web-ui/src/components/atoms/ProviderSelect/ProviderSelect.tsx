@@ -1,11 +1,14 @@
 import { Box, Button } from '@material-ui/core';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
+import SetupContext from '../../../context/SetupContext';
 import { EBackendProvider } from '../../../context/setupContext.types';
 import { ISetupItemProps } from '../../pages/Setup/setup.Types';
 import PageTitle from '../PageTitle/PageTitle';
 
 const ProviderSelect: FC<ISetupItemProps> = (props) => {
   const { next } = props;
+
+  const { setProvider } = useContext(SetupContext);
 
   const availableProviders: EBackendProvider[] = [
     EBackendProvider.POLYGON_EDGE,
@@ -32,6 +35,8 @@ const ProviderSelect: FC<ISetupItemProps> = (props) => {
                 disabled={index != 0}
                 variant={'outlined'}
                 onClick={() => {
+                  setProvider(provider);
+
                   next();
                 }}
               >
