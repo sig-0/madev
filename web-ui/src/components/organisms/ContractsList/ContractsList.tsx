@@ -1,5 +1,6 @@
 import { Box, Typography } from '@material-ui/core';
 import { FC, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SetupContext from '../../../context/SetupContext';
 import theme from '../../../theme/theme';
 import FormTitle from '../../atoms/FormTitle/FormTitle';
@@ -8,6 +9,8 @@ import { IContractsListProps } from './contractsList.types';
 
 const ContractsList: FC<IContractsListProps> = () => {
   const { contracts } = useContext(SetupContext);
+
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -35,6 +38,9 @@ const ContractsList: FC<IContractsListProps> = () => {
               justifyContent={'space-between'}
               style={{
                 cursor: 'pointer'
+              }}
+              onClick={() => {
+                navigate(`/contracts/view/${contract.address}`);
               }}
             >
               <FormTitle title={`Contract ${index}`} />
