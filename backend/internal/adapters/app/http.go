@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 	"net/http"
 	"os"
 	"regexp"
@@ -112,7 +113,9 @@ func (a *Adapter) destroyHandler(writer http.ResponseWriter, request *http.Reque
 		a.logger.Error("could not delete blockscout database container", "container_id", a.docker.BlockscoutDB, "err", err.Error())
 		return
 	}
-
+	// purge volumes
+	a.logger.Info("pruning volumes")
+	a.core.Docker().VolumesPrune(a.ctx, filters.Args{})
 	// remove network
 	a.logger.Info("deleting network")
 	err = a.core.Docker().NetworkRemove(a.ctx, a.docker.NetworkID)
