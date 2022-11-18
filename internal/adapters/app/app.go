@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"github.com/docker/docker/api/types"
 	ports2 "github.com/madz-lab/madev/framework/ports"
 	"github.com/spf13/cobra"
 	"io"
@@ -15,11 +16,13 @@ import (
 const numOfNodes = 4
 
 type Adapter struct {
-	core   ports.ICorePort
-	cmd    ports2.ICmdPort
-	logger hclog.Logger
-	ctx    context.Context
-	docker docker
+	core      ports.ICorePort
+	cmd       ports2.ICmdPort
+	storage   ports2.IStoragePort
+	logger    hclog.Logger
+	ctx       context.Context
+	docker    docker
+	chainInfo chainInfo
 }
 
 type docker struct {
@@ -27,17 +30,36 @@ type docker struct {
 	edgeImage         string
 	outputWriter      io.Writer
 	outputErrorWriter io.Writer
+
+	Environment `json:"environment"`
+}
+
+type Environment struct {
+	ContainerIDs `json:"container_ids"`
+	NetworkID    string `json:"network_id"`
+}
+
+type ContainerIDs struct {
+	Validators   []string `json:"validators"`
+	Nginx        string   `json:"nginx"`
+	Blockscout   string   `json:"blockscout"`
+	BlockscoutDB string   `json:"blockscout_db"`
 }
 
 var ledgeVolumeBinds []string
 
-const edgeNetworkName = "edge-nework"
+const edgeNetworkName = "edge-network"
 
-func NewAdapter(coreInstance ports.ICorePort, cmdInstance ports2.ICmdPort) ports.IAppPort {
+type chainInfo struct {
+	chainID *string
+}
+
+func NewAdapter(coreInstance ports.ICorePort, cmdInstance ports2.ICmdPort, storageInstance ports2.IStoragePort) ports.IAppPort {
 	return &Adapter{
-		core: coreInstance,
-		cmd:  cmdInstance,
-		ctx:  context.Background(),
+		core:    coreInstance,
+		cmd:     cmdInstance,
+		storage: storageInstance,
+		ctx:     context.Background(),
 		docker: docker{
 			edgeImage: "0xpolygon/polygon-edge:0.5.1",
 			//TODO: redirecting to console output but we probably want it to go somewhere else
@@ -54,21 +76,95 @@ func (a *Adapter) WithLogger(logger hclog.Logger) ports.IAppPort {
 }
 
 func (a *Adapter) Run() error {
-	// run on deploy subcommand
+	// run on deploy/start/dep subcommand
 	a.cmd.DeploySubCmd(func(cmd *cobra.Command, args []string) {
+		// deploy the blockchain with Nginx proxy
 		blChainErr := a.deployBlockchainWithProxy()
 		if blChainErr != nil {
 			a.logger.Error("could not deploy blockchain", "err", blChainErr.Error())
 			return
 		}
 
+		// deploy Blockscout and database as a backend
 		blScoutErr := a.deployBlockscout()
 		if blScoutErr != nil {
-			a.logger.Error("could not deploy blockscout", "err", blScoutErr.Error())
+			a.logger.Error("could not deploy Blockscout", "err", blScoutErr.Error())
 			return
 		}
 
 		defer a.close()
+
+		// store container information
+		a.storage.StoreJson(a.docker.Environment)
+	})
+
+	// run on destroy/delete/rm subcommand
+	a.cmd.DestroySubCmd(func(cmd *cobra.Command, args []string) {
+		a.logger.Info("cleaning the environment")
+		// read data from storage
+		a.storage.ReadJson(&a.docker.Environment)
+
+		// remove validators
+		a.logger.Info("purging validators")
+		for _, cont := range a.docker.Validators {
+			err := a.core.Docker().ContainerRemove(a.ctx, cont, types.ContainerRemoveOptions{
+				// TODO: decide from flags if volume should be deleted and force delete
+				RemoveVolumes: true,
+				Force:         true,
+			})
+			if err != nil {
+				a.logger.Error("could not delete validator container", "container_id", cont, "err", err.Error())
+				return
+			}
+		}
+
+		// remove nginx proxy
+		a.logger.Info("purging nginx proxy")
+		err := a.core.Docker().ContainerRemove(a.ctx, a.docker.Nginx, types.ContainerRemoveOptions{
+			// TODO: decide from flags if volume should be deleted and force delete
+			RemoveVolumes: true,
+			Force:         true,
+		})
+		if err != nil {
+			a.logger.Error("could not delete blockscout container", "container_id", a.docker.Nginx, "err", err.Error())
+			return
+		}
+
+		// remove blockscout
+		a.logger.Info("purging blockscout")
+		err = a.core.Docker().ContainerRemove(a.ctx, a.docker.Blockscout, types.ContainerRemoveOptions{
+			// TODO: decide from flags if volume should be deleted and force delete
+			RemoveVolumes: true,
+			Force:         true,
+		})
+		if err != nil {
+			a.logger.Error("could not delete blockscout container", "container_id", a.docker.Blockscout, "err", err.Error())
+			return
+		}
+
+		// remove blockscout database
+		a.logger.Info("purging blockscout database")
+		err = a.core.Docker().ContainerRemove(a.ctx, a.docker.BlockscoutDB, types.ContainerRemoveOptions{
+			// TODO: decide from flags if volume should be deleted and force delete
+			RemoveVolumes: true,
+			Force:         true,
+		})
+		if err != nil {
+			a.logger.Error("could not delete blockscout database container", "container_id", a.docker.BlockscoutDB, "err", err.Error())
+			return
+		}
+
+		// remove network
+		a.logger.Info("deleting network")
+		err = a.core.Docker().NetworkRemove(a.ctx, a.docker.NetworkID)
+		if err != nil {
+			a.logger.Error("could not remove network", "id", a.docker.NetworkID, "err", err.Error())
+			return
+		}
+
+		// reset state file
+		a.storage.StoreJson("")
+		a.logger.Info("environment destroyed")
 	})
 
 	// execute the main command
@@ -94,13 +190,13 @@ func (a *Adapter) deployBlockchainWithProxy() error {
 	}
 
 	if err := a.runValidators(); err != nil {
-		a.logger.Error("could not run validators", "err", err.Error())
+		a.logger.Error("could not run Validators", "err", err.Error())
 
 		return err
 	}
 
 	if err := a.runNginxProxy(); err != nil {
-		a.logger.Error("could not run nginx proxy", "err", err.Error())
+		a.logger.Error("could not run Nginx proxy", "err", err.Error())
 
 		return err
 	}
@@ -110,12 +206,12 @@ func (a *Adapter) deployBlockchainWithProxy() error {
 
 func (a *Adapter) deployBlockscout() error {
 	if err := a.runBlockscoutDatabase(); err != nil {
-		a.logger.Error("could not run blockscout database", "err", err.Error())
+		a.logger.Error("could not run Blockscout database", "err", err.Error())
 
 		return err
 	}
 	if err := a.runBlockscout(); err != nil {
-		a.logger.Error("could not run blockscout", "err", err.Error())
+		a.logger.Error("could not run Blockscout", "err", err.Error())
 
 		return err
 	}

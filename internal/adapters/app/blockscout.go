@@ -9,7 +9,7 @@ import (
 
 func (a *Adapter) runBlockscout() error {
 	a.logger.Info("deploying blockscout")
-	_, err := a.runContainer(
+	contInfo, err := a.runContainer(
 		&container.Config{
 			Tty:   false,
 			Image: "blockscout/blockscout:4.1.8",
@@ -25,7 +25,7 @@ func (a *Adapter) runBlockscout() error {
 				"ETHEREUM_JSONRPC_WS_URL=ws://edge-proxy:9090/ws",
 				"CHAIN_ID=100",
 				"SECRET_KEY_BASE=VTIB3uHDNbvrY0+60ZWgUoUBKDn9ppLR8MI4CpRz4/qLyEFs54ktJfaNT6Z221No",
-				"DATABASE_URL=postgresql://postgres:changeme@blockscout-database:5432/blockscout",
+				"DATABASE_URL=postgresql://postgres:changeme@Blockscout-database:5432/blockscout",
 				"ECTO_USE_SSL=false",
 				"MIX_ENV=prod",
 				"DISABLE_EXCHANGE_RATES=true",
@@ -53,8 +53,11 @@ func (a *Adapter) runBlockscout() error {
 			},
 		}, "blockscout", false)
 	if err != nil {
-		return fmt.Errorf("could not deploy blockscout: %w", err)
+		return fmt.Errorf("could not deploy Blockscout: %w", err)
 	}
+
+	// store container information
+	a.docker.ContainerIDs.Blockscout = contInfo.ID
 
 	a.logger.Info("deploying blockscout")
 
@@ -64,7 +67,7 @@ func (a *Adapter) runBlockscout() error {
 func (a *Adapter) runBlockscoutDatabase() error {
 	a.logger.Info("deploying blockscout database")
 
-	_, err := a.runContainer(
+	contInfo, err := a.runContainer(
 		&container.Config{
 			Tty:   false,
 			Image: "postgres:14.5-alpine",
@@ -93,9 +96,11 @@ func (a *Adapter) runBlockscoutDatabase() error {
 			},
 		}, "blockscout-database", false)
 	if err != nil {
-		return fmt.Errorf("could not deploy blockscout database: %w", err)
+		return fmt.Errorf("could not deploy Blockscout database: %w", err)
 	}
 
+	// store container information
+	a.docker.ContainerIDs.BlockscoutDB = contInfo.ID
 	a.logger.Info("blockscout database deployed")
 
 	return nil

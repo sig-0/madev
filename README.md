@@ -5,5 +5,8 @@ The pourpose of this tool is to provide a Web3 developer with a quick and conven
 with some additional stuff like Blockscout and The Graph for example.      
 
 ## How to use - WIP
-Just clone the repo and run `go run main.go` to bootstrap and start `Polygon Edge` blockchain.    
-Some fixes are on the way and adding Blockscout and The Graph as well.
+### Start cluster
+`go run main.go start` or `go run main.go deploy` 
+
+### Delete cluster
+`go run main.go delete` or `go run main.go destroy`

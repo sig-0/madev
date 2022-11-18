@@ -9,27 +9,34 @@ import (
 
 func (a *Adapter) runValidators() error {
 	// TODO: should go into its own place
+	// get available networks
 	network, err := a.core.Docker().NetworkList(a.ctx, types.NetworkListOptions{})
 	if err != nil {
 		return fmt.Errorf("could not get the list of networks: %w", err)
 	}
 
+	// if our network in not in available networks create it
 	if !ContainsNetwork(network, edgeNetworkName) {
 		a.logger.Info("creating new network", "name", edgeNetworkName)
 
-		_, err = a.core.Docker().NetworkCreate(a.ctx, edgeNetworkName, types.NetworkCreate{Driver: "bridge"})
+		newNet, err := a.core.Docker().NetworkCreate(a.ctx, edgeNetworkName, types.NetworkCreate{Driver: "bridge"})
 		if err != nil {
 			return fmt.Errorf("could not create new network: %w", err)
 		}
+
+		// store network information
+		a.docker.NetworkID = newNet.ID
 	}
 
+	// deploy Validators
 	for i := range [numOfNodes]int{} {
 		a.logger.Info("deploying validator container", "name", fmt.Sprintf("node%d", i+1))
-		_, err := a.runContainer(
+		contInfo, err := a.runContainer(
 			&container.Config{
 				Tty:   false,
 				Image: "0xpolygon/polygon-edge:0.5.1",
-				Cmd:   []string{"server", "--data-dir", "data", "--chain", "genesis/genesis.json", "--libp2p", "0.0.0.0:1478"},
+				// TODO: take parameters from flags
+				Cmd: []string{"server", "--data-dir", "data", "--chain", "genesis/genesis.json", "--libp2p", "0.0.0.0:1478"},
 			},
 			&container.HostConfig{
 				Binds: []string{
@@ -46,6 +53,9 @@ func (a *Adapter) runValidators() error {
 			return fmt.Errorf("could not deploy validator node%d: %w", i+1, err)
 		}
 
+		// store container information
+		a.docker.ContainerIDs.Validators = append(a.docker.ContainerIDs.Validators, contInfo.ID)
+
 		a.logger.Info("validator container deployed", "name", fmt.Sprintf("node%d", i+1))
 	}
 
@@ -54,7 +64,7 @@ func (a *Adapter) runValidators() error {
 
 func (a *Adapter) runNginxProxy() error {
 	a.logger.Info("deploying edge-proxy")
-	_, err := a.runContainer(
+	contInfo, err := a.runContainer(
 		&container.Config{
 			Tty:   false,
 			Image: "trapesys/polygon-edge-proxy",
@@ -78,6 +88,8 @@ func (a *Adapter) runNginxProxy() error {
 		return fmt.Errorf("could not deploy edge-proxy: %w", err)
 	}
 
+	// store container information
+	a.docker.ContainerIDs.Nginx = contInfo.ID
 	a.logger.Info("deploying edge-proxy")
 	return nil
 
