@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/madz-lab/madev/embed"
 	ports2 "github.com/madz-lab/madev/framework/ports"
 	"github.com/spf13/cobra"
@@ -161,6 +162,9 @@ func (a *Adapter) Run() error {
 			a.logger.Error("could not delete blockscout database container", "container_id", a.docker.BlockscoutDB, "err", err.Error())
 			return
 		}
+		// purge volumes
+		a.logger.Info("pruning volumes")
+		a.core.Docker().VolumesPrune(a.ctx, filters.Args{})
 
 		// remove network
 		a.logger.Info("deleting network")
