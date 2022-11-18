@@ -1,57 +1,79 @@
-import {Box} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
-import React, {FC, useEffect, useState} from 'react';
-import {useLocation} from 'react-router';
+import { Box } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import React, { FC, useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
+import QuitService from '../../../services/quitService/quitService';
 import theme from '../../../theme/theme';
+import ActionButton from '../../atoms/ActionButton/ActionButton';
 import Logo from '../../atoms/Logo/Logo';
-import {EActiveAppTab} from '../../layouts/AppLayout/appLayout.types';
+import { EActiveAppTab } from '../../layouts/AppLayout/appLayout.types';
 import NavigationBarItem from '../../molecules/NavigationBarItem/NavigationBarItem';
-import SettingsNavBar from '../../molecules/SettingsNavBar/SettingsNavBar';
-import {INavigationBarProps} from './navigationBar.types';
+import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
+import { INavigationBarProps } from './navigationBar.types';
 
 const NavigationBar: FC<INavigationBarProps> = () => {
   const classes = useStyles();
 
   const [activeTab, setActiveTab] = useState<EActiveAppTab>(
-    EActiveAppTab.DEVICES
+    EActiveAppTab.ACCOUNTS
   );
 
   const location = useLocation();
 
   useEffect(() => {
     switch (location.pathname) {
-      case '/devices':
-        setActiveTab(EActiveAppTab.DEVICES);
+      case '/accounts':
+        setActiveTab(EActiveAppTab.ACCOUNTS);
         break;
-      case '/requests':
-        setActiveTab(EActiveAppTab.REQUESTS);
+      case '/logs':
+        setActiveTab(EActiveAppTab.LOGS);
         break;
-      case '/infrastructure':
-        setActiveTab(EActiveAppTab.INFRASTRUCTURE);
+      case '/contracts':
+        setActiveTab(EActiveAppTab.CONTRACTS);
         break;
-      case '/settings':
-        setActiveTab(EActiveAppTab.SETTINGS);
+      case '/blockscout':
+        setActiveTab(EActiveAppTab.BLOCKSCOUT);
         break;
     }
   }, [location.pathname]);
 
   const dashboardTabs = [
     {
-      currentAppTab: EActiveAppTab.DEVICES,
-      toUrl: '/devices'
+      currentAppTab: EActiveAppTab.ACCOUNTS,
+      toUrl: '/accounts'
     },
     {
-      currentAppTab: EActiveAppTab.REQUESTS,
-      toUrl: '/requests'
+      currentAppTab: EActiveAppTab.LOGS,
+      toUrl: '/logs'
     },
     {
-      currentAppTab: EActiveAppTab.INFRASTRUCTURE,
-      toUrl: '/infrastructure'
+      currentAppTab: EActiveAppTab.CONTRACTS,
+      toUrl: '/contracts'
+    },
+    {
+      currentAppTab: EActiveAppTab.BLOCKSCOUT,
+      toUrl: '/blockscout'
     }
   ];
 
+  const { openSnackbar } = useSnackbar();
   const handleTabChange = (newActive: EActiveAppTab) => {
     setActiveTab(newActive);
+  };
+
+  const handleQuit = () => {
+    const sendQuitSignal = async () => {
+      await QuitService.sendQuitSignal();
+    };
+
+    sendQuitSignal()
+      .then(() => {
+        openSnackbar('Environment closed', 'success');
+      })
+      .catch((e) => {
+        openSnackbar('Unable to gracefully quit', 'error');
+      });
   };
 
   return (
@@ -77,7 +99,7 @@ const NavigationBar: FC<INavigationBarProps> = () => {
           mb={6}
         >
           <Box mb={'3rem'}>
-            <Logo/>
+            <Logo />
           </Box>
         </Box>
         <Box display={'flex'} flexDirection={'column'}>
@@ -99,12 +121,18 @@ const NavigationBar: FC<INavigationBarProps> = () => {
           marginTop={'auto'}
           width={'100%'}
           marginBottom={'3rem'}
+          justifyContent={'center'}
         >
-          <SettingsNavBar
-            activeAppTab={EActiveAppTab.SETTINGS}
-            currentAppTab={activeTab}
-            handleTabChange={handleTabChange}
-            toUrl={'/settings'}
+          <ActionButton
+            startIcon={
+              <ExitToAppRoundedIcon className={'navigationItemIcon'} />
+            }
+            text={'Quit'}
+            square={true}
+            shouldSubmit={false}
+            onClick={() => {
+              handleQuit();
+            }}
           />
         </Box>
       </Box>

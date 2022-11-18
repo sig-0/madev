@@ -8,7 +8,10 @@ const AppRouter = () => (
     <Routes>
       <Route path={'/setup'} element={<SetupPage />} />
       <Route element={<AppLayout />}>
-        <Route path={'/placeholder'} element={<Homepage />} />
+        <Route path={'/accounts'} element={<Homepage />} />
+        <Route path={'/logs'} element={<Homepage />} />
+        <Route path={'/contracts'} element={<Homepage />} />
+        <Route path={'/blockscout'} element={<Homepage />} />
       </Route>
       <Route path="*" element={<Navigate to={'/setup'} />} />
     </Routes>

@@ -1,8 +1,9 @@
 import { Box, Theme, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import DeviceHubRoundedIcon from '@material-ui/icons/DeviceHubRounded';
-import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
-import SettingsRemoteRoundedIcon from '@material-ui/icons/SettingsRemoteRounded';
+import CodeRoundedIcon from '@material-ui/icons/CodeRounded';
+import DashboardRoundedIcon from '@material-ui/icons/DashboardRounded';
+import ReceiptRoundedIcon from '@material-ui/icons/ReceiptRounded';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import clsx from 'clsx';
 import React, { FC } from 'react';
 import theme from '../../../theme/theme';
@@ -19,9 +20,9 @@ const NavigationBarItem: FC<INavigationBarItemProps> = (props) => {
 
   const renderIcon = () => {
     switch (currentAppTab) {
-      case EActiveAppTab.DEVICES:
+      case EActiveAppTab.ACCOUNTS:
         return (
-          <SettingsRemoteRoundedIcon
+          <VpnKeyIcon
             className={'navigationItemIcon'}
             style={{
               fill: isActive
@@ -30,9 +31,9 @@ const NavigationBarItem: FC<INavigationBarItemProps> = (props) => {
             }}
           />
         );
-      case EActiveAppTab.REQUESTS:
+      case EActiveAppTab.LOGS:
         return (
-          <PeopleAltRoundedIcon
+          <ReceiptRoundedIcon
             className={'navigationItemIcon'}
             style={{
               fill: isActive
@@ -41,9 +42,20 @@ const NavigationBarItem: FC<INavigationBarItemProps> = (props) => {
             }}
           />
         );
-      case EActiveAppTab.INFRASTRUCTURE:
+      case EActiveAppTab.CONTRACTS:
         return (
-          <DeviceHubRoundedIcon
+          <CodeRoundedIcon
+            className={'navigationItemIcon'}
+            style={{
+              fill: isActive
+                ? theme.palette.primary.main
+                : theme.palette.custom.transparentBlack
+            }}
+          />
+        );
+      case EActiveAppTab.BLOCKSCOUT:
+        return (
+          <DashboardRoundedIcon
             className={'navigationItemIcon'}
             style={{
               fill: isActive

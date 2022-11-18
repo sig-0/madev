@@ -1,12 +1,13 @@
-import {ReactNode} from 'react';
+import { ReactNode } from 'react';
 
 export interface IAppLayoutProps {
   children?: ReactNode;
 }
 
 export enum EActiveAppTab {
-  DEVICES = 'Devices',
-  REQUESTS = 'Requests',
-  INFRASTRUCTURE = 'Infrastructure',
-  SETTINGS = 'Settings',
+  ACCOUNTS = 'Accounts',
+  LOGS = 'Logs',
+  CONTRACTS = 'Contracts',
+  BLOCKSCOUT = 'Blockscout',
+  QUIT = 'Quit'
 }
