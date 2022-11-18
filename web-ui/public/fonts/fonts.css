@@ -1,0 +1,239 @@
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 100;
+    font-style: normal;
+    src: url('./Montserrat-Thin.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 100;
+    font-style: italic;
+    src: url('./Montserrat-ThinItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 200;
+    font-style: normal;
+    src: url('./Montserrat-ExtraLight.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 200;
+    font-style: italic;
+    src: url('./Montserrat-ExtraLightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 300;
+    font-style: normal;
+    src: url('./Montserrat-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 300;
+    font-style: italic;
+    src: url('./Montserrat-LightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 400;
+    font-style: normal;
+    src: url('./Montserrat-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 400;
+    font-style: italic;
+    src: url('./Montserrat-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 500;
+    font-style: normal;
+    src: url('./Montserrat-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 500;
+    font-style: italic;
+    src: url('./Montserrat-MediumItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 600;
+    font-style: normal;
+    src: url('./Montserrat-SemiBold.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 600;
+    font-style: italic;
+    src: url('./Montserrat-SemiBoldItalic.ttf');
+}
+
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 700;
+    font-style: normal;
+    src: url('./Montserrat-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 700;
+    font-style: italic;
+    src: url('./Montserrat-BoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 800;
+    font-style: normal;
+    src: url('./Montserrat-ExtraBold.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 800;
+    font-style: italic;
+    src: url('./Montserrat-ExtraBoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 900;
+    font-style: normal;
+    src: url('./Montserrat-Black.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: 900;
+    font-style: italic;
+    src: url('./Montserrat-BlackItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 200;
+    font-style: normal;
+    src: url('./SourceCodePro-ExtraLight.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 200;
+    font-style: italic;
+    src: url('./SourceCodePro-ExtraLightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 300;
+    font-style: normal;
+    src: url('./SourceCodePro-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 300;
+    font-style: italic;
+    src: url('./SourceCodePro-LightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 400;
+    font-style: normal;
+    src: url('./SourceCodePro-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 400;
+    font-style: italic;
+    src: url('./SourceCodePro-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 500;
+    font-style: normal;
+    src: url('./SourceCodePro-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 500;
+    font-style: italic;
+    src: url('./SourceCodePro-MediumItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 600;
+    font-style: normal;
+    src: url('./SourceCodePro-SemiBold.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 600;
+    font-style: italic;
+    src: url('./SourceCodePro-SemiBoldItalic.ttf');
+}
+
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 700;
+    font-style: normal;
+    src: url('./SourceCodePro-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 700;
+    font-style: italic;
+    src: url('./SourceCodePro-BoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 800;
+    font-style: normal;
+    src: url('./SourceCodePro-ExtraBold.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 800;
+    font-style: italic;
+    src: url('./SourceCodePro-ExtraBoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 900;
+    font-style: normal;
+    src: url('./SourceCodePro-Black.ttf');
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    font-weight: 900;
+    font-style: italic;
+    src: url('./SourceCodePro-BlackItalic.ttf');
+}
