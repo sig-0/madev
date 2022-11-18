@@ -46,6 +46,10 @@ func (a *Adapter) deployHandler(writer http.ResponseWriter, request *http.Reques
 
 	// store container information
 	a.storage.StoreJson(a.docker.Environment)
+	var resp = make(map[string]string)
+	resp["message"] = "deployment successful"
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(resp)
 }
 
 func (a *Adapter) destroyHandler(writer http.ResponseWriter, request *http.Request) {
@@ -114,6 +118,11 @@ func (a *Adapter) destroyHandler(writer http.ResponseWriter, request *http.Reque
 	// reset state file
 	a.storage.StoreJson("")
 	a.logger.Info("environment destroyed")
+
+	var resp = make(map[string]string)
+	resp["message"] = "deployment removal successful"
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(resp)
 }
 
 func (a *Adapter) indexHandler(writer http.ResponseWriter, request *http.Request) {
