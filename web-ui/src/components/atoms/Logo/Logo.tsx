@@ -2,6 +2,7 @@ import { Box, Theme, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { FC } from 'react';
 import { ILogoProps } from './logo.types';
+import LogoImg from '../../../shared/assets/img/logo.png'
 
 const Logo: FC<ILogoProps> = () => {
   const classes = useStyles();
@@ -12,7 +13,8 @@ const Logo: FC<ILogoProps> = () => {
       justifyContent={'center'}
       flexDirection={'column'}
     >
-      <Typography className={classes.logoText}>MaDev</Typography>
+      
+      <img src={LogoImg} />
     </Box>
   );
 };
