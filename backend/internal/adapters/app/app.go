@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/docker/docker/api/types"
+	"github.com/madz-lab/madev/embed"
 	ports2 "github.com/madz-lab/madev/framework/ports"
 	"github.com/spf13/cobra"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 
@@ -175,8 +177,10 @@ func (a *Adapter) Run() error {
 
 	a.cmd.ServeSubCmd(func(cmd *cobra.Command, args []string) {
 		mux := http.NewServeMux()
+		// strip folder name from embeded folder
+		front, _ := fs.Sub(embed.EmbededFront, "build")
 
-		mux.HandleFunc("/", a.indexHandler)
+		mux.Handle("/", http.FileServer(http.FS(front)))
 		mux.HandleFunc("/api/v1/deploy", a.deployHandler)
 		mux.HandleFunc("/api/v1/destroy", a.destroyHandler)
 
