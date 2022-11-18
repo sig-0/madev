@@ -1,27 +1,19 @@
-import { Box, IconButton, TextField, Typography } from '@material-ui/core';
-import AddRoundedIcon from '@material-ui/icons/AddRounded';
-import RemoveRoundedIcon from '@material-ui/icons/RemoveRounded';
+import { Box, TextField, Typography } from '@material-ui/core';
 import { useFormik } from 'formik';
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
+import SetupContext from '../../../context/SetupContext';
 import { IClusterParams } from '../../../context/setupContext.types';
 import { ESetupStep, ISetupItemProps } from '../../pages/SetupPage/setup.Types';
 import ActionButton from '../ActionButton/ActionButton';
+import Counter from '../Counter/Counter';
 import PageTitle from '../PageTitle/PageTitle';
 
 const ClusterParams: FC<ISetupItemProps> = (props) => {
   const { next } = props;
 
+  const { setClusterParams } = useContext(SetupContext);
+
   const [nodes, setNodes] = useState<number>(4);
-
-  const handleDecrease = () => {
-    if (nodes > 1) {
-      setNodes(nodes - 1);
-    }
-  };
-
-  const handleIncrease = () => {
-    setNodes(nodes + 1);
-  };
 
   const [initialValues] = useState<IClusterParams>({
     numNodes: nodes,
@@ -32,6 +24,11 @@ const ClusterParams: FC<ISetupItemProps> = (props) => {
     initialValues,
     enableReinitialize: true, // TODO add validation schema
     onSubmit: (values, { resetForm }) => {
+      setClusterParams({
+        numNodes: nodes,
+        jsonRPCPort: values.jsonRPCPort
+      });
+
       next();
     }
   });
@@ -48,18 +45,12 @@ const ClusterParams: FC<ISetupItemProps> = (props) => {
       <PageTitle title={ESetupStep.NETWORK_PARAMS} />
       <form autoComplete={'off'} onSubmit={formik.handleSubmit}>
         <Box display={'flex'} flexDirection={'column'} maxWidth={'100%'} mt={4}>
-          <Box display={'flex'} alignItems={'center'}>
-            <Typography>Num. nodes</Typography>
-            <Box ml={2} display={'flex'} alignItems={'center'}>
-              <IconButton color={'primary'} onClick={() => handleDecrease()}>
-                <RemoveRoundedIcon />
-              </IconButton>
-              <Typography>{nodes}</Typography>
-              <IconButton color={'primary'} onClick={() => handleIncrease()}>
-                <AddRoundedIcon />
-              </IconButton>
-            </Box>
-          </Box>
+          <Counter
+            title={'Num. nodes'}
+            minimum={1}
+            setValue={setNodes}
+            count={nodes}
+          />
           <Box display={'flex'} alignItems={'center'} mt={6}>
             <Box mr={1}>
               <Typography>127.0.0.1/</Typography>

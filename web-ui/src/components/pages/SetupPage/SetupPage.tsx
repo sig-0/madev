@@ -1,5 +1,6 @@
 import { Box, Container, Step, StepLabel, Stepper } from '@material-ui/core';
 import { FC, useEffect, useState } from 'react';
+import AccountsSetup from '../../atoms/AccountsSetup/AccountsSetup';
 import ClusterParams from '../../atoms/ClusterParams/ClusterParams';
 import NetworkParams from '../../atoms/NetworkParams/NetworkParams';
 import ProviderSelect from '../../atoms/ProviderSelect/ProviderSelect';
@@ -12,6 +13,7 @@ const SetupPage: FC<ISetupPageProps> = () => {
     ESetupStep.PROVIDER,
     ESetupStep.NETWORK_PARAMS,
     ESetupStep.CLUSTER_PARAMS,
+    ESetupStep.ACCOUNTS_SETUP,
     ESetupStep.ADDITIONAL_SERVICES
   ];
 
@@ -23,6 +25,8 @@ const SetupPage: FC<ISetupPageProps> = () => {
         return <NetworkParams next={handleNext} />;
       case ESetupStep.CLUSTER_PARAMS:
         return <ClusterParams next={handleNext} />;
+      case ESetupStep.ACCOUNTS_SETUP:
+        return <AccountsSetup next={handleNext} />;
       default:
         return null;
     }
@@ -37,6 +41,9 @@ const SetupPage: FC<ISetupPageProps> = () => {
         setActiveStep(ESetupStep.CLUSTER_PARAMS);
         break;
       case ESetupStep.CLUSTER_PARAMS:
+        setActiveStep(ESetupStep.ACCOUNTS_SETUP);
+        break;
+      case ESetupStep.ACCOUNTS_SETUP:
         setActiveStep(ESetupStep.ADDITIONAL_SERVICES);
         break;
       case ESetupStep.ADDITIONAL_SERVICES:

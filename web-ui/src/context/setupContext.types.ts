@@ -15,3 +15,8 @@ export interface IClusterParams {
   numNodes: number;
   jsonRPCPort: number;
 }
+
+export interface IAccountsSetupParams {
+  mnemonic: string;
+  accounts: string[];
+}
