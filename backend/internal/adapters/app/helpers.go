@@ -6,6 +6,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/pkg/stdcopy"
 	"io"
+	"strings"
 )
 
 func ContainsNetwork(haystack []types.NetworkResource, needle string) bool {
@@ -71,4 +72,20 @@ func (a *Adapter) getLogs(containerID string) error {
 	stdcopy.StdCopy(a.docker.outputWriter, a.docker.outputErrorWriter, a.docker.dockerReader)
 
 	return nil
+}
+
+func (a *Adapter) parseFlagParameters() {
+	premine := a.cmd.Flags().Premine
+	premineSplit := strings.Split(*premine, ",")
+	parsedPremine := strings.Join(premineSplit, " ")
+
+	a.chainInfo.premineWallets = parsedPremine
+	a.logger.Info("premining accounts from flags", "accounts", a.chainInfo.premineWallets)
+}
+
+func (a *Adapter) parseJsonParameters() {
+	premine := strings.Join(a.RawJsonParameters.PremineAccounts, " ")
+	a.chainInfo.premineWallets = premine
+
+	a.logger.Info("premining accoutnts from json", "accounts", a.chainInfo.premineWallets)
 }

@@ -7,6 +7,7 @@ import (
 	ports2 "github.com/madz-lab/madev/framework/ports"
 	"github.com/spf13/cobra"
 	"io"
+	"net/http"
 	"os"
 
 	"github.com/hashicorp/go-hclog"
@@ -23,6 +24,7 @@ type Adapter struct {
 	ctx       context.Context
 	docker    docker
 	chainInfo chainInfo
+	*RawJsonParameters
 }
 
 type docker struct {
@@ -51,15 +53,17 @@ var ledgeVolumeBinds []string
 const edgeNetworkName = "edge-network"
 
 type chainInfo struct {
-	chainID *string
+	chainID        string
+	premineWallets string
 }
 
 func NewAdapter(coreInstance ports.ICorePort, cmdInstance ports2.ICmdPort, storageInstance ports2.IStoragePort) ports.IAppPort {
 	return &Adapter{
-		core:    coreInstance,
-		cmd:     cmdInstance,
-		storage: storageInstance,
-		ctx:     context.Background(),
+		core:              coreInstance,
+		cmd:               cmdInstance,
+		storage:           storageInstance,
+		RawJsonParameters: &RawJsonParameters{},
+		ctx:               context.Background(),
 		docker: docker{
 			edgeImage: "0xpolygon/polygon-edge:0.5.1",
 			//TODO: redirecting to console output but we probably want it to go somewhere else
@@ -78,6 +82,8 @@ func (a *Adapter) WithLogger(logger hclog.Logger) ports.IAppPort {
 func (a *Adapter) Run() error {
 	// run on deploy/start/dep subcommand
 	a.cmd.DeploySubCmd(func(cmd *cobra.Command, args []string) {
+		// Parse input parameters
+		a.parseFlagParameters()
 		// deploy the blockchain with Nginx proxy
 		blChainErr := a.deployBlockchainWithProxy()
 		if blChainErr != nil {
@@ -165,6 +171,20 @@ func (a *Adapter) Run() error {
 		// reset state file
 		a.storage.StoreJson("")
 		a.logger.Info("environment destroyed")
+	})
+
+	a.cmd.ServeSubCmd(func(cmd *cobra.Command, args []string) {
+		mux := http.NewServeMux()
+
+		mux.HandleFunc("/", a.indexHandler)
+		mux.HandleFunc("/api/v1/deploy", a.deployHandler)
+		mux.HandleFunc("/api/v1/destroy", a.destroyHandler)
+
+		a.logger.Info("serving web gui at localhost:15000")
+		err := http.ListenAndServe(":15000", mux)
+		if err != nil {
+			return
+		}
 	})
 
 	// execute the main command
