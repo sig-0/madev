@@ -3,3 +3,5 @@ logs
 *state.json
 
 .DS_Store
+
+dist/
