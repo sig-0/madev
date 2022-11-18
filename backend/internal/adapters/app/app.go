@@ -187,6 +187,7 @@ func (a *Adapter) Run() error {
 		mux.HandleFunc("/api/v1/logs", a.logsHandler)
 
 		a.logger.Info("serving web gui at localhost:15000")
+		openbrowser("http://localhost:15000")
 		err := http.ListenAndServe(":15000", mux)
 		if err != nil {
 			return

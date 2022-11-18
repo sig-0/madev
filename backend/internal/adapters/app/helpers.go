@@ -6,6 +6,9 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/pkg/stdcopy"
 	"io"
+	"log"
+	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -64,7 +67,7 @@ func (a *Adapter) getLogs(containerID string) error {
 	var err error
 
 	// Get the logs from container - should be optional
-	a.docker.dockerReader, err = a.core.Docker().ContainerLogs(a.ctx, containerID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Since: "5m"})
+	a.docker.dockerReader, err = a.core.Docker().ContainerLogs(a.ctx, containerID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Since: "1m"})
 	if err != nil {
 		return fmt.Errorf("could not get container logs id=%s err=%w", containerID, err)
 	}
@@ -88,4 +91,23 @@ func (a *Adapter) parseJsonParameters() {
 	a.chainInfo.premineWallets = premine
 
 	a.logger.Info("premining accoutnts from json", "accounts", a.chainInfo.premineWallets)
+}
+
+func openbrowser(url string) {
+	var err error
+
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }

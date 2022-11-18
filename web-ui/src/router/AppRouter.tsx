@@ -1,7 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AppLayout from '../components/layouts/AppLayout/AppLayout';
 import AccountsPage from '../components/pages/AccountsPage/AccountsPage';
+import Blockscout from '../components/pages/Blockscout/Blockscout';
 import ContractsPage from '../components/pages/ContractsPage/ContractsPage';
+import Logs from '../components/pages/Logger/Logs';
 import NewContract from '../components/pages/NewContract/NewContract';
 import SetupPage from '../components/pages/SetupPage/SetupPage';
 
@@ -11,10 +13,10 @@ const AppRouter = () => (
       <Route path={'/setup'} element={<SetupPage />} />
       <Route element={<AppLayout />}>
         <Route path={'/accounts'} element={<AccountsPage />} />
-        <Route path={'/logs'} element={<AccountsPage />} />
+        <Route path={'/logs'} element={<Logs />} />
         <Route path={'/contracts'} element={<ContractsPage />} />
         <Route path={'/contracts/new'} element={<NewContract />} />
-        <Route path={'/blockscout'} element={<AccountsPage />} />
+        <Route path={'/blockscout'} element={<Blockscout />} />
       </Route>
       <Route path="*" element={<Navigate to={'/setup'} />} />
     </Routes>
