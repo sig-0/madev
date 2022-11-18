@@ -2,7 +2,7 @@ import { Box, Button } from '@material-ui/core';
 import { FC, useContext } from 'react';
 import SetupContext from '../../../context/SetupContext';
 import { EBackendProvider } from '../../../context/setupContext.types';
-import { ISetupItemProps } from '../../pages/Setup/setup.Types';
+import { ISetupItemProps } from '../../pages/SetupPage/setup.Types';
 import PageTitle from '../PageTitle/PageTitle';
 
 const ProviderSelect: FC<ISetupItemProps> = (props) => {

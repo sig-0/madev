@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import { FC, useContext, useState } from 'react';
 import SetupContext from '../../../context/SetupContext';
 import { INetworkParams } from '../../../context/setupContext.types';
-import { ESetupStep, ISetupItemProps } from '../../pages/Setup/setup.Types';
+import { ESetupStep, ISetupItemProps } from '../../pages/SetupPage/setup.Types';
 import ActionButton from '../ActionButton/ActionButton';
 import PageTitle from '../PageTitle/PageTitle';
 

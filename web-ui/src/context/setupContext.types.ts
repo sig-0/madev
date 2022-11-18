@@ -10,3 +10,8 @@ export interface INetworkParams {
   chainID: number;
   blockTime: number;
 }
+
+export interface IClusterParams {
+  numNodes: number;
+  jsonRPCPort: number;
+}
