@@ -64,7 +64,7 @@ func (a *Adapter) getLogs(containerID string) error {
 	var err error
 
 	// Get the logs from container - should be optional
-	a.docker.dockerReader, err = a.core.Docker().ContainerLogs(a.ctx, containerID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Since: "5m"})
+	a.docker.dockerReader, err = a.core.Docker().ContainerLogs(a.ctx, containerID, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Since: "1m"})
 	if err != nil {
 		return fmt.Errorf("could not get container logs id=%s err=%w", containerID, err)
 	}

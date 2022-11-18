@@ -213,8 +213,6 @@ func (a *Adapter) logsHandler(writer http.ResponseWriter, request *http.Request)
 	arrayResp.Success = true
 	writer.WriteHeader(http.StatusOK)
 	json.NewEncoder(writer).Encode(arrayResp)
-
-	a.logger.Info("logs successfully sent")
 }
 
 func errorJsonResponse(w http.ResponseWriter, err error) {
