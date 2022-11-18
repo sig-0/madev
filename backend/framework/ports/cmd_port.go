@@ -14,6 +14,8 @@ type ICmdPort interface {
 	DeploySubCmd(func(cmd *cobra.Command, args []string))
 	// DestroySubCmd arms deploySubCmd with Run function from another module
 	DestroySubCmd(func(cmd *cobra.Command, args []string))
+	// ServeSubCmd arms deploySubCmd with Run function from another module
+	ServeSubCmd(func(cmd *cobra.Command, args []string))
 	// Flags returns all flag pointers
 	Flags() types.FlagValues
 }

@@ -20,6 +20,12 @@ var destroyCmd = &cobra.Command{
 	Short:   "Destroys the environment",
 }
 
+var serveCmd = &cobra.Command{
+	Use:     "serve",
+	Aliases: []string{"web", "gui"},
+	Short:   "Deploys a local web management GUI",
+}
+
 type Adapter struct {
 	rootCmd *cobra.Command
 	logger  hclog.Logger
@@ -58,7 +64,7 @@ func (a *Adapter) RootCmd() *cobra.Command {
 
 func (a *Adapter) DeploySubCmd(deploySubFunc func(cmd *cobra.Command, args []string)) {
 	deployCmd.Flags().StringVarP(a.flags.ChainID, "chain-id", "c", "100", "Chain id for the blockchain")
-	deployCmd.Flags().StringVarP(a.flags.Premine, "premine", "", "", "Premine wallet and ammount")
+	deployCmd.Flags().StringVarP(a.flags.Premine, "premine", "", "", "Premine wallet and ammount, multiple accounts separated with blank space.")
 	deployCmd.Flags().StringVarP(a.flags.BlockGasLimit, "gas-limit", "g", "", "Gas limit for blocks")
 
 	deployCmd.Run = deploySubFunc
@@ -72,6 +78,11 @@ func (a *Adapter) DeploySubCmdFlags() *pflag.FlagSet {
 func (a *Adapter) DestroySubCmd(destroySubFunc func(cmd *cobra.Command, args []string)) {
 	destroyCmd.Run = destroySubFunc
 	a.RootCmd().AddCommand(destroyCmd)
+}
+
+func (a *Adapter) ServeSubCmd(serveSubFunc func(cmd *cobra.Command, args []string)) {
+	serveCmd.Run = serveSubFunc
+	a.RootCmd().AddCommand(serveCmd)
 }
 
 func (a *Adapter) Flags() types.FlagValues {

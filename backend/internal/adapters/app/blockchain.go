@@ -128,7 +128,7 @@ func (a *Adapter) runGenerateGenesis() error {
 		&container.Config{
 			Tty:   false,
 			Image: "trapesys/polygon-ledge",
-			Cmd:   []string{"-mode", "genesis", "-num-nodes", fmt.Sprintf("%d", numOfNodes)},
+			Cmd:   []string{"-mode", "genesis", "--premine", a.chainInfo.premineWallets, "-num-nodes", fmt.Sprintf("%d", numOfNodes)},
 		},
 		&container.HostConfig{
 			Binds:      ledgeVolumeBinds,
