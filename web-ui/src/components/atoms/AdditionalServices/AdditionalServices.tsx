@@ -21,7 +21,9 @@ const AdditionalServices: FC<ISetupItemProps> = (props) => {
   const { setAdditionalServices, accountParams } = useContext(SetupContext);
 
   const [services, setServices] = useState<Map<EAdditionalService, boolean>>(
-    new Map<EAdditionalService, boolean>()
+    new Map<EAdditionalService, boolean>([
+      [EAdditionalService.BLOCKSCOUT, true]
+    ])
   );
 
   const toggleService = (service: EAdditionalService) => {
