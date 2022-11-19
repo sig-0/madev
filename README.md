@@ -1,16 +1,17 @@
 <h1 align="center"> MaDev </h1>
-All in one tool for Web3 developers for a quick and convenient way of deploying an EVM compatible blockchains with some additional stuff like Blockscout and The Graph for example.  
+All in one tool for Web3 developers for quickly and conveniently deploying EVM compatible blockchains with some additional services like Blockscout, The Graph and more.  
 
 ---
 
-```md
-!!! Prerequisites
-Before continuing to follow the guide, please make sure you have Docker installed locally
-```
+## ⚠️ Prerequisites
+
+Before continuing to follow this guide, please make sure you have Docker installed locally.
 
 ## How to use it
+
 ### 1. Use release
-Download binary for you machine from [latest realise](https://github.com/madz-lab/madev/releases) 
+
+Download the binary for you machine from the [latest releases](https://github.com/madz-lab/madev/releases).
 
 ## Manual build
 
