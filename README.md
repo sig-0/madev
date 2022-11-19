@@ -32,3 +32,11 @@ Download the binary for you machine from the [latest releases](https://github.co
     ```bash
     cd backend && go run main.go serve
     ```
+## Usage
+### Command Line
+* Deploy all services `madev deploy`
+* Destroy all service `madev destroy`
+
+### WEB GUI
+To start web interface, simply run `madev serve`.    
+Your default browser should automagically open the app.
