@@ -7,13 +7,13 @@ All in one tool for Web3 developers for quickly and conveniently deploying EVM c
 
 Before continuing to follow this guide, please make sure you have Docker installed locally.
 
-## How to use it
+## Usage
 
-### 1. Use release
+### Use the official release
 
 Download the binary for you machine from the [latest releases](https://github.com/madz-lab/madev/releases).
 
-## Manual build
+### Manual build
 
 1. Clone the repo
 
@@ -32,11 +32,15 @@ Download the binary for you machine from the [latest releases](https://github.co
     ```bash
     cd backend && go run main.go serve
     ```
-## Usage
+
+## Additional Usage Information
+
 ### Command Line
+
 * Deploy all services `madev deploy`
-* Destroy all service `madev destroy`
+* Destroy all services `madev destroy`
 
 ### WEB GUI
+
 To start web interface, simply run `madev serve`.    
 Your default browser should automagically open the app.
